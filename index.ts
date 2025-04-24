@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
-import "./ingest"; 
+import "./ingest";
+import "./statistics_service";
 import sqlite3 from "sqlite3";
 import path from "path";
 
@@ -60,12 +61,16 @@ app.get("/query", async (_req: Request, res: Response) => {
 
 app.get("/query/:id", async (req: Request, res: Response) => {
   const { id } = req.params;
-  console.log(`[LOGS]: DEVOLVIENDO REGISTRO ${id}`);
-  db.all(`SELECT * FROM ${TABLE_NAME} where id = ${id}`, [], (err, rows) => {
-    if (err) {
+  console.log(`[LOGS]: DEVOLVIENDO REGISTROS DE NODO ${id}`);
+  db.all(
+    `SELECT * FROM ${TABLE_NAME} where device_id = ${id}`,
+    [],
+    (err, rows) => {
+      if (err) {
+      }
+      res.status(200).json(rows);
     }
-    res.status(200).json(rows);
-  });
+  );
 });
 
 app.get("/", async (_req: Request, res: Response) => {
