@@ -27,7 +27,8 @@ const db = new sqlite3.Database(
   }
 );
 
-app.post("/store", async (req: Request, res: Response): Promise<any> => {
+app.post("/store", async (req: any, res: Response): Promise<any> => {
+  console.log("[LOGS]: DATOS RECIBIDOS");
   const { device_id, temperature, rssi } = req.body;
 
   // if (!content) {
@@ -39,31 +40,30 @@ app.post("/store", async (req: Request, res: Response): Promise<any> => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
-    res
-      .status(201)
-      .json({
-        id: this.lastID,
-        obj: { DEVICE_ID: device_id, TEMPERATURE: temperature, RSSI: rssi },
-      });
+    res.status(201).json({
+      id: this.lastID,
+      obj: { DEVICE_ID: device_id, TEMPERATURE: temperature, RSSI: rssi },
+    });
   });
 });
 
 app.get("/query", async (_req: Request, res: Response) => {
+  console.log("[LOGS]: DEVOLVIENDO TODOS LOS DATOS");
   db.all(`SELECT * FROM ${TABLE_NAME}`, [], (err, rows) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
-    res.json(rows);
+    res.status(200).json(rows);
   });
 });
 
 app.get("/query/:id", async (req: Request, res: Response) => {
   const { id } = req.params;
+  console.log(`[LOGS]: DEVOLVIENDO REGISTRO ${id}`);
   db.all(`SELECT * FROM ${TABLE_NAME} where id = ${id}`, [], (err, rows) => {
     if (err) {
-      return res.status(500).json({ error: err.message });
     }
-    res.json(rows);
+    res.status(200).json(rows);
   });
 });
 
