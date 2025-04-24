@@ -28,8 +28,8 @@ const db = new sqlite3.Database(
 );
 
 app.post("/store", async (req: any, res: Response): Promise<any> => {
-  console.log("[LOGS]: DATOS RECIBIDOS");
   const { device_id, temperature, rssi } = req.body;
+  console.log(`[LOGS]: ${new Date()} DATOS RECIBIDOS DEL NODO ${device_id}`);
 
   // if (!content) {
   //   return res.status(400).json({ error: "Content is required" });
@@ -48,7 +48,7 @@ app.post("/store", async (req: any, res: Response): Promise<any> => {
 });
 
 app.get("/query", async (_req: Request, res: Response) => {
-  console.log("[LOGS]: DEVOLVIENDO TODOS LOS DATOS");
+  console.log(`[LOGS]: ${new Date()} DEVOLVIENDO TODOS LOS DATOS`);
   db.all(`SELECT * FROM ${TABLE_NAME}`, [], (err, rows) => {
     if (err) {
       return res.status(500).json({ error: err.message });
