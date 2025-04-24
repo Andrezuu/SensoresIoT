@@ -1,4 +1,5 @@
 import express, { Request, Response } from "express";
+import "./ingest"; 
 import sqlite3 from "sqlite3";
 import path from "path";
 
@@ -10,7 +11,7 @@ app.use(express.json());
 
 // Conexión a la base de datos
 const db = new sqlite3.Database(
-  path.join(__dirname, `../${TABLE_NAME}.db`),
+  path.join(__dirname, `${TABLE_NAME}.db`),
   (err) => {
     if (err) console.error("Error opening database:", err.message);
     else {
