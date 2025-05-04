@@ -23,6 +23,19 @@ mqttClient.on("message", async (topic, message) => {
     const [, , deviceId, type] = topic.split("/");
 
     console.log(`[MQTT] Mensaje recibido en ${topic} ->`, payload);
+    if (type === "status") {
+      if (payload.status === "offline") {
+        console.warn(
+          `[LWT] El dispositivo ${deviceId} se desconectó inesperadamente (LWT)`
+        );
+
+        // Puedes eliminarlo del diccionario si quieres que el timeout no vuelva a dispararse
+        delete deviceStates[deviceId];
+      } else if (payload.status === "online") {
+        console.log(`[ONLINE] El dispositivo ${deviceId} está online`);
+        deviceStates[deviceId] = Date.now();
+      }
+    }
 
     if (type === "data") {
       deviceStates[deviceId] = Date.now();
@@ -45,9 +58,9 @@ mqttClient.on("message", async (topic, message) => {
 setInterval(() => {
   const now = Date.now();
   for (const [deviceId, lastSeen] of Object.entries(deviceStates)) {
-    if (now - lastSeen > 45_000) {
+    if (now - lastSeen > 30_000) {
       console.warn(`[TIMEOUT] Device ${deviceId} está OFFLINE (timeout)`);
       delete deviceStates[deviceId];
     }
   }
-}, 10_000);
+}, 5_000);
